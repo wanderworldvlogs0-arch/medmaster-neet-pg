@@ -392,4 +392,88 @@ function SubjectGrid({ t, onOpen }) {
           </div>
         ))}
       </div>
-  
+    </div>
+  );
+}
+
+function Crumb({ t, items }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12.5, color: t.textDim, marginBottom: 14 }}>
+      {items.map((it, i) => (
+        <React.Fragment key={i}>
+          {i > 0 && <ChevronRight size={12} />}
+          {it.onClick ? (
+            <button onClick={it.onClick} style={{ background: "none", border: "none", color: t.teal, cursor: "pointer", fontSize: 12.5, fontWeight: 600, padding: 0 }}>{it.label}</button>
+          ) : (
+            <span style={{ color: t.text, fontWeight: 600 }}>{it.label}</span>
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+function ChapterList({ t, subject, onBack, onOpen }) {
+  return (
+    <div>
+      <Crumb t={t} items={[{ label: "Subjects", onClick: onBack }, { label: subject.name }]} />
+      <button onClick={onBack} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: t.textDim, fontSize: 12, cursor: "pointer", marginBottom: 8, padding: 0 }}>
+        <ChevronLeft size={13} /> Back to subjects
+      </button>
+      <div className="disp" style={{ fontSize: 22, fontWeight: 700, marginBottom: 3 }}>{subject.name}</div>
+      <div style={{ color: t.textDim, fontSize: 13.5, marginBottom: 20 }}>{subject.chapters.length} chapters, {subject.mastery}% mastery</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {subject.chapters.map((c, i) => (
+          <div key={c.name} onClick={() => onOpen(i)} style={{
+            ...cardStyle(t), cursor: "pointer", display: "flex", alignItems: "center",
+            justifyContent: "space-between", padding: "14px 18px",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+              <div className="mono" style={{ fontSize: 11, color: t.textDim, width: 22 }}>{String(i + 1).padStart(2, "0")}</div>
+              <div>
+                <div className="disp" style={{ fontWeight: 600, fontSize: 14.5 }}>{c.name}</div>
+                <div style={{ fontSize: 11.5, color: t.textDim }}>{c.topics.length} topics</div>
+              </div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <VitalsTrace values={c.topics.map(x => x.mastery)} color={c.mastery >= 60 ? t.mint : c.mastery >= 40 ? t.amber : t.coral} height={24} />
+              <span className="mono" style={{ fontSize: 12.5, fontWeight: 700, width: 34, textAlign: "right" }}>{c.mastery}%</span>
+              <ChevronRight size={16} color={t.textDim} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TopicList({ t, subject, chapter, onBack }) {
+  return (
+    <div>
+      <Crumb t={t} items={[{ label: subject.name, onClick: onBack }, { label: chapter.name }]} />
+      <button onClick={onBack} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: t.textDim, fontSize: 12, cursor: "pointer", marginBottom: 8, padding: 0 }}>
+        <ChevronLeft size={13} /> Back to chapters
+      </button>
+      <div className="disp" style={{ fontSize: 22, fontWeight: 700, marginBottom: 3 }}>{chapter.name}</div>
+      <div style={{ color: t.textDim, fontSize: 13.5, marginBottom: 20 }}>{chapter.topics.length} topics</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
+        {chapter.topics.map((tp) => {
+          const color = tp.mastery >= 60 ? t.mint : tp.mastery >= 40 ? t.amber : t.coral;
+          return (
+            <div key={tp.name} style={cardStyle(t)}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <div className="disp" style={{ fontWeight: 600, fontSize: 14 }}>{tp.name}</div>
+                <span className="mono" style={{ fontSize: 12, fontWeight: 700, color }}>{tp.mastery}%</span>
+              </div>
+              <div style={{ fontSize: 11.5, color: t.textDim }}>{tp.questions} questions, MCQ, Clinical, PYQ</div>
+              <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+                <button style={btnStyle(t.teal)}>Practice</button>
+                <button style={{ ...btnStyle("transparent"), color: t.text, border: `1px solid ${t.border}` }}>Flashcards</button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
