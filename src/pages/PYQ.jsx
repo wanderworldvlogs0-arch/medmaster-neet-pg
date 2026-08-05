@@ -272,4 +272,11 @@ function Chip({ t, active, onClick, children, dot }) {
   return (
     <button onClick={onClick} className="btn" style={{
       display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 8, fontSize: 11.5,
-      fontWeight: 600, cursor: "pointer", border: `1px solid ${active ? t.tea
+      fontWeight: 600, cursor: "pointer", border: `1px solid ${active ? t.teal : t.border}`,
+      background: active ? `${t.teal}18` : "transparent", color: active ? t.teal : t.textDim,
+    }}>
+      {dot && <span style={{ width: 7, height: 7, borderRadius: "50%", background: dot }} />}
+      {children}
+    </button>
+  );
+}
