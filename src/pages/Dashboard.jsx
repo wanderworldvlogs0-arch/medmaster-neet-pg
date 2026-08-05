@@ -268,7 +268,7 @@ function DashboardHome({ t, totalQuestions, onOpenSubjects }) {
               <div style={{ fontSize: 12, color: t.textDim, marginBottom: 4 }}>Weekly accuracy</div>
               <div className="disp" style={{ fontSize: 26, fontWeight: 700 }}>83<span style={{ fontSize: 14 }}>%</span></div>
             </div>
-            <div className="mono" style={{ fontSize: 11, color: t.mint, background: dark ? "#123023" : "#E4F6EC", padding: "3px 8px", borderRadius: 6 }}>up 6.2%</div>
+            <div className="mono" style={{ fontSize: 11, color: t.mint, background: `${t.mint}22`, padding: "3px 8px", borderRadius: 6 }}>up 6.2%</div>
           </div>
           <div style={{ height: 90, marginTop: 6, marginLeft: -10 }}>
             <ResponsiveContainer width="100%" height="100%">
