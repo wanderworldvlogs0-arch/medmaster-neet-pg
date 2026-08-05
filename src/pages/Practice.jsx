@@ -352,4 +352,88 @@ function SummaryView({ t, stats, total, onReview, onRestart }) {
             strokeLinecap="round" />
         </svg>
         <div className="disp" style={{ fontSize: 30, fontWeight: 700 }}>{stats.accuracy}%</div>
-        <div style={{ fontSize: 11
+        <div style={{ fontSize: 11, color: t.textDim }}>accuracy</div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10, marginBottom: 28 }}>
+        <StatBox t={t} v={stats.correct} l="Correct" color={t.mint} />
+        <StatBox t={t} v={stats.wrong} l="Wrong" color={t.coral} />
+        <StatBox t={t} v={stats.skipped} l="Skipped" color={t.textDim} />
+        <StatBox t={t} v={`${mins}:${String(secs).padStart(2, "0")}`} l="Time" color={t.amber} mono />
+      </div>
+
+      <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+        <button onClick={onReview} style={primaryBtn(t.teal)}>Review answers <ArrowRight size={15} /></button>
+        <button onClick={onRestart} style={{ ...primaryBtn("transparent"), color: t.text, border: `1px solid ${t.border}` }}>
+          <RotateCcw size={14} /> Retry session
+        </button>
+      </div>
+    </div>
+  );
+}
+function StatBox({ t, v, l, color, mono }) {
+  return (
+    <div style={{ background: t.panel, border: `1px solid ${t.border}`, borderRadius: 12, padding: "12px 6px" }}>
+      <div className={mono ? "mono" : "disp"} style={{ fontSize: 17, fontWeight: 700, color }}>{v}</div>
+      <div style={{ fontSize: 10.5, color: t.textDim, marginTop: 2 }}>{l}</div>
+    </div>
+  );
+}
+
+function ReviewView({ t, idx, setIdx, answers, submitted, isCorrectFn, onDone }) {
+  const q = QUESTIONS[idx];
+  const sel = answers[idx] || new Set();
+  const attempted = !!submitted[idx];
+  const correct = attempted && isCorrectFn(idx);
+
+  return (
+    <div style={{ maxWidth: 780, margin: "0 auto", padding: "22px 20px 60px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+        <div className="mono" style={{ fontSize: 12, color: t.textDim }}>Review {idx + 1} of {QUESTIONS.length}</div>
+        <button onClick={onDone} style={iconBtn(t, t.textDim)}><X size={15} /></button>
+      </div>
+
+      <div style={{ background: t.panel, border: `1px solid ${t.border}`, borderRadius: 18, padding: 24 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+          {!attempted ? <Badge t={t} color={t.textDim}>Skipped</Badge>
+            : correct ? <Badge t={t} color={t.mint}>Correct</Badge>
+            : <Badge t={t} color={t.coral}>Incorrect</Badge>}
+          <Badge t={t} color={t.textDim}>{q.pyq}</Badge>
+        </div>
+        <div style={{ fontSize: 15, lineHeight: 1.55, marginBottom: 16 }}>{q.stem}</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
+          {q.options.map((opt, oi) => {
+            const isCorrectOpt = q.correct.includes(oi);
+            const isSel = sel.has(oi);
+            let border = t.border, bg = "transparent";
+            if (isCorrectOpt) { border = t.mint; bg = `${t.mint}14`; }
+            else if (isSel) { border = t.coral; bg = `${t.coral}14`; }
+            return (
+              <div key={oi} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 13px", borderRadius: 10, border: `1.5px solid ${border}`, background: bg }}>
+                <span style={{ fontSize: 13.3 }}>{opt}</span>
+                {isCorrectOpt && <CheckCircle2 size={14} color={t.mint} style={{ marginLeft: "auto" }} />}
+                {isSel && !isCorrectOpt && <XCircle size={14} color={t.coral} style={{ marginLeft: "auto" }} />}
+              </div>
+            );
+          })}
+        </div>
+        <div style={{ paddingTop: 14, borderTop: `1px dashed ${t.border}` }}>
+          <div style={{ fontSize: 13.3, lineHeight: 1.6, marginBottom: 8 }}>{q.explanation}</div>
+          <div className="mono" style={{ fontSize: 11.5, color: t.textDim }}>Ref: {q.reference}</div>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 16 }}>
+        <button disabled={idx === 0} onClick={() => setIdx(idx - 1)}
+          style={{ ...primaryBtn("transparent"), color: t.text, border: `1px solid ${t.border}`, opacity: idx === 0 ? 0.4 : 1 }}>
+          <ChevronLeft size={15} /> Previous
+        </button>
+        {idx < QUESTIONS.length - 1 ? (
+          <button onClick={() => setIdx(idx + 1)} style={primaryBtn(t.teal)}>Next <ChevronRight size={15} /></button>
+        ) : (
+          <button onClick={onDone} style={primaryBtn(t.teal)}>Back to summary</button>
+        )}
+      </div>
+    </div>
+  );
+                 }
