@@ -344,4 +344,43 @@ function WeakAreasTab({ t }) {
 }
 
 function Crumb({ t, items }) {
-  retur
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: t.textDim, marginBottom: 12, flexWrap: "wrap" }}>
+      {items.map((it, i) => (
+        <React.Fragment key={i}>
+          {i > 0 && <ChevronRight size={11} />}
+          {it.onClick ? (
+            <button onClick={it.onClick} style={{ background: "none", border: "none", color: t.teal, cursor: "pointer", fontSize: 12, fontWeight: 600, padding: 0 }}>{it.label}</button>
+          ) : <span style={{ color: t.text, fontWeight: 600 }}>{it.label}</span>}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+function WeakRow({ t, name, mastery, sub, action, onClick }) {
+  const color = masteryColor(t, mastery);
+  return (
+    <div className="row" onClick={onClick} style={{
+      ...cardStyle(t), cursor: onClick ? "pointer" : "default", display: "flex", alignItems: "center",
+      justifyContent: "space-between", padding: "14px 18px",
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ width: 34, height: 34, borderRadius: 9, background: `${color}22`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Target size={15} color={color} />
+        </div>
+        <div>
+          <div className="disp" style={{ fontWeight: 600, fontSize: 13.8 }}>{name}</div>
+          {sub && <div style={{ fontSize: 11, color: t.textDim }}>{sub}</div>}
+        </div>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <div style={{ width: 90, height: 6, borderRadius: 3, background: t.border, overflow: "hidden" }}>
+          <div style={{ width: `${mastery}%`, height: "100%", background: color, borderRadius: 3 }} />
+        </div>
+        <span className="mono" style={{ fontSize: 12.5, fontWeight: 700, color, width: 34, textAlign: "right" }}>{mastery}%</span>
+        {action}
+      </div>
+    </div>
+  );
+}
