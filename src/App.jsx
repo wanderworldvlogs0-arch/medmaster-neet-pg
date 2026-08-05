@@ -36,7 +36,9 @@ export default function App() {
           }}>{k}</button>
         ))}
       </div>
-      <Current />
+      <div style={{ color: "black", padding: 20 }}>
+  Hello MedMaster
+</div>
     </div>
   );
 }
