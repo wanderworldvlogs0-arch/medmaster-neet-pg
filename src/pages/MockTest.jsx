@@ -308,7 +308,7 @@ function TestingView({ t, config, questions, idx, setIdx, answers, status, timeL
         <button className="btn" onClick={() => setConfirmOpen(true)} style={{ ...primaryBtn(t.coral), width: "100%", justifyContent: "center" }}>Submit test</button>
       </div>
 
-      {confirmOpen && (
+        {confirmOpen && (
         <div style={{ position: "fixed", inset: 0, background: "#00000088", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 20 }}>
           <div style={{ background: t.panel, border: `1px solid ${t.border}`, borderRadius: 16, padding: 24, width: 340 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
@@ -319,4 +319,132 @@ function TestingView({ t, config, questions, idx, setIdx, answers, status, timeL
               You have answered {Object.keys(answers).length} of {questions.length} questions. This cannot be undone.
             </div>
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-              <button className="btn" onClick={() => setConfirmOpen(false)} style={ghostBtn(t)}>Cancel</butt
+              <button className="btn" onClick={() => setConfirmOpen(false)} style={ghostBtn(t)}>Cancel</button>
+              <button className="btn" onClick={onSubmit} style={primaryBtn(t.coral)}>Submit</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+function LegendRow({ color, border, label }) {
+  return <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+    <div style={{ width: 13, height: 13, borderRadius: 4, background: color, border: border ? `1.5px solid ${border}` : "none" }} />
+    {label}
+  </div>;
+}
+
+function ResultView({ t, dark, config, negMarking, questions, answers, results, submittedAt, onRetake }) {
+  const [showSolutions, setShowSolutions] = useState(false);
+  const mins = Math.floor((submittedAt || 0) / 60), secs = (submittedAt || 0) % 60;
+  const pieData = [
+    { name: "Correct", value: results.correct, color: t.mint },
+    { name: "Wrong", value: results.wrong, color: t.coral },
+    { name: "Skipped", value: results.skipped, color: t.textDim },
+  ].filter((d) => d.value > 0);
+
+  const subjectData = Object.entries(results.bySubject).map(([name, s]) => ({
+    name, accuracy: s.correct + s.wrong ? Math.round((s.correct / (s.correct + s.wrong)) * 100) : 0,
+  }));
+
+  return (
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: "26px 20px 60px" }}>
+      <div className="disp" style={{ fontSize: 22, fontWeight: 700, marginBottom: 3 }}>{config.label} Result</div>
+      <div style={{ color: t.textDim, fontSize: 13.5, marginBottom: 22 }}>Submitted in {mins}m {secs}s, {negMarking ? `negative marking ${config.marksWrong}` : "no negative marking"}</div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1.2fr", gap: 14, marginBottom: 22 }}>
+        <div style={cardStyle(t)}>
+          <div style={{ fontSize: 12, color: t.textDim, marginBottom: 4 }}>Score</div>
+          <div className="disp" style={{ fontSize: 28, fontWeight: 700 }}>{results.marks}<span style={{ fontSize: 15, color: t.textDim }}> / {results.maxMarks}</span></div>
+        </div>
+        <div style={cardStyle(t)}>
+          <div style={{ fontSize: 12, color: t.textDim, marginBottom: 4 }}>Accuracy</div>
+          <div className="disp" style={{ fontSize: 28, fontWeight: 700, color: t.teal }}>{results.accuracy}%</div>
+        </div>
+        <div style={{ ...cardStyle(t), display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ width: 90, height: 90 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={pieData} dataKey="value" innerRadius={26} outerRadius={40} paddingAngle={3} stroke="none">
+                  {pieData.map((d, i) => <Cell key={i} fill={d.color} />)}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            <LegendRow color={t.mint} label={`${results.correct} correct`} />
+            <LegendRow color={t.coral} label={`${results.wrong} wrong`} />
+            <LegendRow color={t.textDim} label={`${results.skipped} skipped`} />
+          </div>
+        </div>
+      </div>
+
+      <div style={{ ...cardStyle(t), marginBottom: 22 }}>
+        <div className="disp" style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>Subject-wise accuracy</div>
+        <div style={{ height: 220 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={subjectData} margin={{ top: 4, right: 8, left: -18, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke={t.border} vertical={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 10.5, fill: t.textDim }} axisLine={{ stroke: t.border }} tickLine={false} interval={0} angle={-20} textAnchor="end" height={50} />
+              <YAxis tick={{ fontSize: 10.5, fill: t.textDim }} axisLine={false} tickLine={false} domain={[0, 100]} />
+              <Tooltip contentStyle={{ background: t.panel, border: `1px solid ${t.border}`, borderRadius: 8, fontSize: 12 }} />
+              <Bar dataKey="accuracy" radius={[6, 6, 0, 0]}>
+                {subjectData.map((d, i) => <Cell key={i} fill={SUBJECT_COLOR(t)[d.name] || t.teal} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ display: "flex", gap: 10, marginBottom: 22 }}>
+        <button className="btn" onClick={() => setShowSolutions(!showSolutions)} style={primaryBtn(t.teal)}>
+          {showSolutions ? "Hide" : "View"} solutions <ArrowRight size={15} />
+        </button>
+        <button className="btn" onClick={onRetake} style={ghostBtn(t)}>Take another test</button>
+      </div>
+
+      {showSolutions && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {questions.map((q, qi) => {
+            const a = answers[qi];
+            const correct = a === q.correct;
+            return (
+              <div key={qi} style={cardStyle(t)}>
+                <div style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "center" }}>
+                  <Badge t={t} color={SUBJECT_COLOR(t)[q.subject] || t.teal}>{q.subject}</Badge>
+                  {a === undefined ? <Badge t={t} color={t.textDim}>Skipped</Badge>
+                    : correct ? <Badge t={t} color={t.mint}>Correct</Badge> : <Badge t={t} color={t.coral}>Wrong</Badge>}
+                </div>
+                <div style={{ fontSize: 13.8, marginBottom: 10 }}>{qi + 1}. {q.stem}</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  {q.options.map((opt, oi) => {
+                    const isCorrectOpt = oi === q.correct, isSel = oi === a;
+                    let border = t.border, bg = "transparent";
+                    if (isCorrectOpt) { border = t.mint; bg = `${t.mint}14`; }
+                    else if (isSel) { border = t.coral; bg = `${t.coral}14`; }
+                    return (
+                      <div key={oi} style={{ display: "flex", alignItems: "center", gap: 9, padding: "8px 12px", borderRadius: 9, border: `1.5px solid ${border}`, background: bg }}>
+                        <span style={{ fontSize: 12.8 }}>{opt}</span>
+                        {isCorrectOpt && <CheckCircle2 size={13} color={t.mint} style={{ marginLeft: "auto" }} />}
+                        {isSel && !isCorrectOpt && <XCircle size={13} color={t.coral} style={{ marginLeft: "auto" }} />}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Badge({ t, color, children }) {
+  return <span className="mono" style={{ fontSize: 10.5, fontWeight: 600, color, border: `1px solid ${color}55`, background: `${color}14`, borderRadius: 7, padding: "3.5px 9px" }}>{children}</span>;
+}
+const cardStyle = (t) => ({ background: t.panel, border: `1px solid ${t.border}`, borderRadius: 16, padding: 18 });
+const iconBtn = (t) => ({ width: 34, height: 34, borderRadius: 9, border: `1px solid ${t.border}`, background: t.panelAlt, color: t.text, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" });
+const primaryBtn = (color) => ({ background: color, color: "#0E1626", border: "none", borderRadius: 10, padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 });
+const ghostBtn = (t) => ({ background: "transparent", color: t.text, border: `1px solid ${t.border}`, borderRadius: 10, padding: "10px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 });
