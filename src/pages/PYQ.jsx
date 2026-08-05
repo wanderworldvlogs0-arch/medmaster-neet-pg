@@ -270,4 +270,5 @@ function iconBtn(t) {
 }
 const cardStyle = (t) => ({ background: t.panel, border: `1px solid ${t.border}`, borderRadius: 16, padding: 18 });
 function Badge({ color, children }) {
-  return <span className="mono" style={{ fontSize: 10.5, fontWeight: 600, color, border: `1px solid ${color}55`, background: `${color}14`, borderRadius: 7, padding: "3.5px 9px", display: "inline-flex", alignItems: "cent
+  return <span className="mono" style={{ fontSize: 10.5, fontWeight: 600, color, border: `1px solid ${color}55`, background: `${color}14`, borderRadius: 7, padding: "3.5px 9px", display: "inline-flex", alignItems: "center" }}>{children}</span>;
+}
