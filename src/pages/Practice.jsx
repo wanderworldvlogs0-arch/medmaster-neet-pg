@@ -4,9 +4,6 @@ import {
   Circle, CheckSquare, Square, Sun, Moon, X, ArrowRight, RotateCcw, Sparkles,
 } from "lucide-react";
 
-/* ---------------------------------------------------------------
-   TOKENS (same "clinical chart" system as the dashboard module)
---------------------------------------------------------------- */
 const palette = {
   dark: {
     bg: "#0E1626", panel: "#141F35", panelAlt: "#182545",
@@ -21,9 +18,6 @@ const palette = {
 };
 const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');`;
 
-/* ---------------------------------------------------------------
-   MOCK QUESTION BANK — Medicine > Cardiology > Heart Failure
---------------------------------------------------------------- */
 const QUESTIONS = [
   {
     type: "single", difficulty: "medium", estTime: 60, pyq: "AIIMS Nov 2023",
@@ -31,25 +25,25 @@ const QUESTIONS = [
     stem: "A 62-year-old man with NYHA class III heart failure with reduced ejection fraction is already on a loop diuretic, ACE inhibitor, and beta-blocker. Which drug class, when added, has been shown to reduce mortality by targeting the RAAS at the aldosterone level?",
     options: ["Thiazide diuretics", "Mineralocorticoid receptor antagonists", "Calcium channel blockers", "Alpha-1 blockers"],
     correct: [1],
-    explanation: "Mineralocorticoid receptor antagonists (spironolactone, eplerenone) block aldosterone's effect at the distal nephron and myocardium. Landmark trials (RALES, EMPHASIS-HF) showed a consistent mortality benefit when added to standard HFrEF therapy, which is why they're a pillar of guideline-directed medical therapy alongside ACE-I/ARNI, beta-blockers, and SGLT2 inhibitors.",
+    explanation: "Mineralocorticoid receptor antagonists, spironolactone and eplerenone, block aldosterone effect at the distal nephron and myocardium. Landmark trials RALES and EMPHASIS-HF showed a consistent mortality benefit when added to standard HFrEF therapy, which is why they are a pillar of guideline-directed medical therapy alongside ACE-I or ARNI, beta-blockers, and SGLT2 inhibitors.",
     reference: "Harrison's Principles of Internal Medicine, 21st Ed., Ch. 254",
   },
   {
     type: "multiple", difficulty: "hard", estTime: 90, pyq: "NEET PG 2022",
     tags: ["Heart Failure", "Pharmacology"],
-    stem: "Which of the following drugs have demonstrated a mortality benefit in patients with heart failure with reduced ejection fraction (HFrEF)? (Select all that apply)",
-    options: ["Sacubitril-valsartan (ARNI)", "Dapagliflozin (SGLT2 inhibitor)", "Digoxin", "Carvedilol", "Amlodipine"],
+    stem: "Which of the following drugs have demonstrated a mortality benefit in patients with heart failure with reduced ejection fraction, HFrEF? Select all that apply.",
+    options: ["Sacubitril-valsartan, ARNI", "Dapagliflozin, SGLT2 inhibitor", "Digoxin", "Carvedilol", "Amlodipine"],
     correct: [0, 1, 3],
-    explanation: "ARNI (PARADIGM-HF), SGLT2 inhibitors (DAPA-HF, EMPEROR-Reduced), and specific beta-blockers like carvedilol/bisoprolol/metoprolol succinate (COPERNICUS, CIBIS-II, MERIT-HF) all reduce mortality in HFrEF. Digoxin improves symptoms and reduces hospitalizations but has never shown a mortality benefit. Amlodipine is mortality-neutral and used only for concomitant hypertension or angina, not as HF-directed therapy.",
+    explanation: "ARNI, PARADIGM-HF trial, SGLT2 inhibitors, DAPA-HF and EMPEROR-Reduced trials, and specific beta-blockers like carvedilol, bisoprolol and metoprolol succinate all reduce mortality in HFrEF. Digoxin improves symptoms and reduces hospitalizations but has never shown a mortality benefit. Amlodipine is mortality-neutral and used only for concomitant hypertension or angina, not as HF-directed therapy.",
     reference: "ACC/AHA/HFSA 2022 Heart Failure Guideline",
   },
   {
     type: "image", difficulty: "medium", estTime: 75, pyq: "INI-CET 2023",
     tags: ["Heart Failure", "Radiology"],
     stem: "A 58-year-old woman presents with progressive breathlessness. Her chest X-ray is shown below. Which finding is most specific for cardiogenic pulmonary edema rather than ARDS?",
-    options: ["Bilateral perihilar 'bat-wing' opacities", "Cardiomegaly with upper lobe venous diversion", "Diffuse peripheral ground-glass opacities", "Pleural effusion alone"],
+    options: ["Bilateral perihilar bat-wing opacities", "Cardiomegaly with upper lobe venous diversion", "Diffuse peripheral ground-glass opacities", "Pleural effusion alone"],
     correct: [1],
-    explanation: "Cardiomegaly with cephalization of pulmonary vessels (upper lobe venous diversion) points to a cardiac cause of pulmonary edema — elevated left atrial pressure redistributes blood to the upper lobes before frank edema develops. ARDS classically shows a normal heart size with diffuse, peripheral, patchy opacities because the process is driven by capillary leak, not hydrostatic pressure.",
+    explanation: "Cardiomegaly with cephalization of pulmonary vessels, upper lobe venous diversion, points to a cardiac cause of pulmonary edema. Elevated left atrial pressure redistributes blood to the upper lobes before frank edema develops. ARDS classically shows a normal heart size with diffuse, peripheral, patchy opacities because the process is driven by capillary leak, not hydrostatic pressure.",
     reference: "Felson's Principles of Chest Roentgenology, 5th Ed.",
   },
   {
@@ -58,31 +52,31 @@ const QUESTIONS = [
     stem: "The Frank-Starling mechanism describes the relationship between which two variables?",
     options: ["Heart rate and stroke volume", "Ventricular end-diastolic volume and stroke volume", "Afterload and ejection fraction", "Coronary flow and myocardial oxygen demand"],
     correct: [1],
-    explanation: "The Frank-Starling law states that, within physiological limits, increased ventricular end-diastolic volume (preload) stretches myocardial fibers and increases the force of contraction, thereby increasing stroke volume. In decompensated heart failure, the ventricle operates on the flattened/descending part of this curve, so further volume loading no longer improves — and can worsen — stroke volume.",
-    reference: "Guyton & Hall Textbook of Medical Physiology, 14th Ed., Ch. 9",
+    explanation: "The Frank-Starling law states that, within physiological limits, increased ventricular end-diastolic volume, preload, stretches myocardial fibers and increases the force of contraction, thereby increasing stroke volume. In decompensated heart failure, the ventricle operates on the flattened or descending part of this curve, so further volume loading no longer improves, and can worsen, stroke volume.",
+    reference: "Guyton and Hall Textbook of Medical Physiology, 14th Ed., Ch. 9",
   },
   {
     type: "single", difficulty: "hard", estTime: 90, pyq: "AIIMS May 2022",
     tags: ["Heart Failure", "Clinical"],
-    stem: "A 70-year-old man with known HFrEF (EF 30%) on optimal medical therapy presents with a resting heart rate of 88/min in sinus rhythm despite maximally tolerated beta-blocker dose. Which agent can be added to further reduce heart rate without additional negative inotropic effect?",
+    stem: "A 70-year-old man with known HFrEF, EF 30%, on optimal medical therapy presents with a resting heart rate of 88 per minute in sinus rhythm despite maximally tolerated beta-blocker dose. Which agent can be added to further reduce heart rate without additional negative inotropic effect?",
     options: ["Verapamil", "Ivabradine", "Digoxin", "Diltiazem"],
     correct: [1],
-    explanation: "Ivabradine selectively inhibits the If ('funny') current in the SA node, slowing heart rate without affecting myocardial contractility or blood pressure — making it useful in HFrEF patients who remain tachycardic despite maximal beta-blockade. Non-dihydropyridine calcium channel blockers (verapamil, diltiazem) are avoided in HFrEF due to their negative inotropic effect.",
+    explanation: "Ivabradine selectively inhibits the If, funny, current in the SA node, slowing heart rate without affecting myocardial contractility or blood pressure, making it useful in HFrEF patients who remain tachycardic despite maximal beta-blockade. Non-dihydropyridine calcium channel blockers, verapamil and diltiazem, are avoided in HFrEF due to their negative inotropic effect.",
     reference: "SHIFT Trial, Lancet 2010; ACC/AHA/HFSA 2022 Guideline",
   },
   {
     type: "multiple", difficulty: "medium", estTime: 75, pyq: "NEET PG 2021",
     tags: ["Heart Failure", "Clinical Signs"],
-    stem: "Which of the following are recognized clinical signs of right-sided heart failure? (Select all that apply)",
+    stem: "Which of the following are recognized clinical signs of right-sided heart failure? Select all that apply.",
     options: ["Raised JVP", "Bilateral pitting pedal edema", "Bibasilar crepitations", "Tender hepatomegaly", "Orthopnea"],
     correct: [0, 1, 3],
-    explanation: "Right heart failure causes systemic venous congestion: raised JVP, dependent pitting edema, and tender hepatomegaly (from hepatic congestion, sometimes with pulsatile liver in tricuspid regurgitation). Bibasilar crepitations and orthopnea reflect pulmonary venous congestion and are signs of left-sided, not right-sided, heart failure — a classic PYQ discriminator.",
-    reference: "Davidson's Principles & Practice of Medicine, 24th Ed.",
+    explanation: "Right heart failure causes systemic venous congestion: raised JVP, dependent pitting edema, and tender hepatomegaly from hepatic congestion, sometimes with pulsatile liver in tricuspid regurgitation. Bibasilar crepitations and orthopnea reflect pulmonary venous congestion and are signs of left-sided, not right-sided, heart failure, a classic PYQ discriminator.",
+    reference: "Davidson's Principles and Practice of Medicine, 24th Ed.",
   },
-]; 
+];
 
 function optIcon(type, selected, isCorrectOpt, submitted, t) {
-  const Icon = type === "multiple" ? (selected ? CheckSquare : Square) : (selected ? Circle : Circle);
+  const Icon = type === "multiple" ? (selected ? CheckSquare : Square) : Circle;
   let color = t.textDim;
   if (submitted) {
     if (isCorrectOpt) color = t.mint;
@@ -91,20 +85,17 @@ function optIcon(type, selected, isCorrectOpt, submitted, t) {
   return <Icon size={17} color={color} fill={type === "single" && selected ? color : "none"} strokeWidth={2} />;
 }
 
-/* ---------------------------------------------------------------
-   APP
---------------------------------------------------------------- */
 export default function MedMasterPractice() {
   const [dark, setDark] = useState(true);
   const t = dark ? palette.dark : palette.light;
 
   const [idx, setIdx] = useState(0);
-  const [answers, setAnswers] = useState({});     // qIdx -> Set of selected option indices
-  const [submitted, setSubmitted] = useState({});  // qIdx -> bool
+  const [answers, setAnswers] = useState({});
+  const [submitted, setSubmitted] = useState({});
   const [bookmarked, setBookmarked] = useState({});
   const [flagged, setFlagged] = useState({});
-  const [times, setTimes] = useState({});          // qIdx -> seconds spent
-  const [phase, setPhase] = useState("session");    // session | summary | review
+  const [times, setTimes] = useState({});
+  const [phase, setPhase] = useState("session");
   const [reviewIdx, setReviewIdx] = useState(0);
   const [seconds, setSeconds] = useState(0);
 
@@ -166,27 +157,23 @@ export default function MedMasterPractice() {
   return (
     <div style={{
       minHeight: "100vh", background: t.bg, color: t.text, fontFamily: "'Inter',sans-serif",
-      transition: "background .25s,color .25s",
     }}>
       <style>{FONT_IMPORT}{`
         .disp{font-family:'Space Grotesk',sans-serif;} .mono{font-family:'IBM Plex Mono',monospace;}
         * { box-sizing:border-box; }
-        .opt{transition:all .12s;} .opt:hover{filter:brightness(1.03);}
-        .btn{transition:all .12s;} .btn:active{transform:scale(.97);}
         ::-webkit-scrollbar{width:8px;} ::-webkit-scrollbar-thumb{background:${t.border};border-radius:8px;}
       `}</style>
 
-      {/* TOPBAR */}
       <div style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
         padding: "16px 26px", borderBottom: `1px solid ${t.border}`, background: t.panel,
         position: "sticky", top: 0, zIndex: 5,
       }}>
         <div>
-          <div className="mono" style={{ fontSize: 10.5, color: t.textDim, letterSpacing: 1, marginBottom: 2 }}>MEDICINE &nbsp;›&nbsp; CARDIOLOGY</div>
-          <div className="disp" style={{ fontSize: 15.5, fontWeight: 700 }}>Heart Failure — Practice Session</div>
+          <div className="mono" style={{ fontSize: 10.5, color: t.textDim, letterSpacing: 1, marginBottom: 2 }}>MEDICINE, CARDIOLOGY</div>
+          <div className="disp" style={{ fontSize: 15.5, fontWeight: 700 }}>Heart Failure Practice Session</div>
         </div>
-        <button onClick={() => setDark(!dark)} className="btn" style={{
+        <button onClick={() => setDark(!dark)} style={{
           width: 34, height: 34, borderRadius: 9, border: `1px solid ${t.border}`, background: t.panelAlt,
           color: t.text, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
         }}>{dark ? <Sun size={15} /> : <Moon size={15} />}</button>
@@ -194,7 +181,7 @@ export default function MedMasterPractice() {
 
       {phase === "session" && (
         <SessionView t={t} dark={dark} q={q} idx={idx} total={total} selected={selected}
-          isSubmitted={isSubmitted} submitted={submitted} answers={answers}
+          isSubmitted={isSubmitted} submitted={submitted}
           bookmarked={!!bookmarked[idx]} flagged={!!flagged[idx]} seconds={seconds}
           toggleOption={toggleOption} submit={submit} goNext={goNext}
           setIdx={setIdx}
@@ -215,16 +202,12 @@ export default function MedMasterPractice() {
   );
 }
 
-/* ---------------------------------------------------------------
-   SESSION VIEW
---------------------------------------------------------------- */
-function SessionView({ t, dark, q, idx, total, selected, isSubmitted, seconds, toggleOption, submit, goNext, setIdx, bookmarked, flagged, toggleBookmark, toggleFlag, isCorrectFn, submitted, answers }) {
+function SessionView({ t, dark, q, idx, total, selected, isSubmitted, seconds, toggleOption, submit, goNext, setIdx, bookmarked, flagged, toggleBookmark, toggleFlag, isCorrectFn, submitted }) {
   const typeLabel = { single: "Single Correct", multiple: "Multiple Correct", image: "Image Based" }[q.type];
   const diffColor = { easy: t.mint, medium: t.amber, hard: t.coral }[q.difficulty];
 
   return (
     <div style={{ maxWidth: 780, margin: "0 auto", padding: "22px 20px 60px" }}>
-      {/* progress dots */}
       <div style={{ display: "flex", gap: 5, marginBottom: 18 }}>
         {QUESTIONS.map((_, i) => {
           let color = t.border;
@@ -238,21 +221,20 @@ function SessionView({ t, dark, q, idx, total, selected, isSubmitted, seconds, t
       </div>
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-        <div className="mono" style={{ fontSize: 12, color: t.textDim }}>Question {idx + 1} / {total}</div>
+        <div className="mono" style={{ fontSize: 12, color: t.textDim }}>Question {idx + 1} of {total}</div>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <span className="mono" style={{ fontSize: 12, color: t.textDim, display: "flex", alignItems: "center", gap: 4 }}>
             <Clock3 size={13} /> {String(Math.floor(seconds / 60)).padStart(1, "0")}:{String(seconds % 60).padStart(2, "0")}
           </span>
-          <button onClick={toggleBookmark} className="btn" style={iconBtn(t, bookmarked ? t.amber : t.textDim)}>
+          <button onClick={toggleBookmark} style={iconBtn(t, bookmarked ? t.amber : t.textDim)}>
             <Bookmark size={15} fill={bookmarked ? t.amber : "none"} />
           </button>
-          <button onClick={toggleFlag} className="btn" style={iconBtn(t, flagged ? t.coral : t.textDim)}>
+          <button onClick={toggleFlag} style={iconBtn(t, flagged ? t.coral : t.textDim)}>
             <Flag size={15} fill={flagged ? t.coral : "none"} />
           </button>
         </div>
       </div>
 
-      {/* question card */}
       <div style={{ background: t.panel, border: `1px solid ${t.border}`, borderRadius: 18, padding: 24 }}>
         <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
           <Badge t={t} color={t.teal}>{typeLabel}</Badge>
@@ -263,7 +245,7 @@ function SessionView({ t, dark, q, idx, total, selected, isSubmitted, seconds, t
 
         <div style={{ fontSize: 15.5, lineHeight: 1.55, marginBottom: 18 }}>{q.stem}</div>
 
-        {q.type === "image" && <ChestXraySVG t={t} />}
+        {q.type === "image" && <ChestXraySVG />}
 
         <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
           {q.options.map((opt, oi) => {
@@ -275,7 +257,7 @@ function SessionView({ t, dark, q, idx, total, selected, isSubmitted, seconds, t
               else if (isSel && !isCorrectOpt) { bg = dark ? "#331B18" : "#FBE8E4"; border = t.coral; }
             } else if (isSel) { bg = dark ? "#123833" : "#E5F5F2"; border = t.teal; }
             return (
-              <div key={oi} className="opt" onClick={() => toggleOption(oi)} style={{
+              <div key={oi} onClick={() => toggleOption(oi)} style={{
                 display: "flex", alignItems: "center", gap: 11, padding: "12px 14px", borderRadius: 11,
                 border: `1.5px solid ${border}`, background: bg, cursor: isSubmitted ? "default" : "pointer",
               }}>
@@ -305,15 +287,14 @@ function SessionView({ t, dark, q, idx, total, selected, isSubmitted, seconds, t
         )}
       </div>
 
-      {/* action bar */}
       <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 18 }}>
         {!isSubmitted ? (
-          <button className="btn" disabled={selected.size === 0} onClick={submit} style={{
+          <button disabled={selected.size === 0} onClick={submit} style={{
             ...primaryBtn(t.teal), opacity: selected.size === 0 ? 0.45 : 1,
             cursor: selected.size === 0 ? "not-allowed" : "pointer",
           }}>Submit answer</button>
         ) : (
-          <button className="btn" onClick={goNext} style={primaryBtn(t.teal)}>
+          <button onClick={goNext} style={primaryBtn(t.teal)}>
             {idx < total - 1 ? "Next question" : "Finish session"} <ArrowRight size={15} />
           </button>
         )}
@@ -328,16 +309,16 @@ function Badge({ t, color, children }) {
     background: `${color}14`, borderRadius: 7, padding: "3.5px 9px",
   }}>{children}</span>;
 }
-const iconBtn = (t, color) => ({
-  width: 30, height: 30, borderRadius: 8, border: `1px solid ${t.border}`, background: t.panelAlt,
-  color, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-});
-const primaryBtn = (color) => ({
-  background: color, color: "#0E1626", border: "none", borderRadius: 10, padding: "11px 20px",
-  fontSize: 13.5, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6,
-});
+function iconBtn(t, color) {
+  return { width: 30, height: 30, borderRadius: 8, border: `1px solid ${t.border}`, background: t.panelAlt,
+    color, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" };
+}
+function primaryBtn(color) {
+  return { background: color, color: "#0E1626", border: "none", borderRadius: 10, padding: "11px 20px",
+    fontSize: 13.5, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 };
+}
 
-function ChestXraySVG({ t }) {
+function ChestXraySVG() {
   return (
     <div style={{ background: "#0A0F18", borderRadius: 12, padding: 14, marginBottom: 18, display: "flex", justifyContent: "center" }}>
       <svg width="220" height="220" viewBox="0 0 220 220">
@@ -348,4 +329,27 @@ function ChestXraySVG({ t }) {
         <ellipse cx="112" cy="130" rx="46" ry="40" fill="#8593AC" opacity="0.55" />
         <ellipse cx="100" cy="118" rx="30" ry="26" fill="#B9C4D6" opacity="0.5" />
         <path d="M110 20 L110 210" stroke="#3A4B63" strokeWidth="1" strokeDasharray="3 4" />
-    
+      </svg>
+    </div>
+  );
+}
+
+function SummaryView({ t, stats, total, onReview, onRestart }) {
+  const mins = Math.floor(stats.timeSum / 60), secs = stats.timeSum % 60;
+  return (
+    <div style={{ maxWidth: 560, margin: "40px auto", padding: "0 20px", textAlign: "center" }}>
+      <div className="disp" style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Session complete</div>
+      <div style={{ color: t.textDim, fontSize: 13.5, marginBottom: 26 }}>Heart Failure, {total} questions</div>
+
+      <div style={{
+        display: "inline-flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        width: 150, height: 150, borderRadius: "50%", border: `10px solid ${t.border}`,
+        position: "relative", marginBottom: 26,
+      }}>
+        <svg width="150" height="150" style={{ position: "absolute", top: -10, left: -10, transform: "rotate(-90deg)" }}>
+          <circle cx="75" cy="75" r="65" fill="none" stroke={t.teal} strokeWidth="10"
+            strokeDasharray={2 * Math.PI * 65} strokeDashoffset={2 * Math.PI * 65 * (1 - stats.accuracy / 100)}
+            strokeLinecap="round" />
+        </svg>
+        <div className="disp" style={{ fontSize: 30, fontWeight: 700 }}>{stats.accuracy}%</div>
+        <div style={{ fontSize: 11
