@@ -1,13 +1,10 @@
 import React, { useMemo, useState } from "react";
 import {
-  Sun, Moon, Search, ChevronDown, ChevronUp, CheckCircle2, XCircle, Calendar,
+  Sun, Moon, Search, ChevronDown, ChevronUp, CheckCircle2, Calendar,
   GraduationCap, SlidersHorizontal, X,
 } from "lucide-react";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Cell } from "recharts";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from "recharts";
 
-/* ---------------------------------------------------------------
-   TOKENS (same "clinical chart" system as the other modules)
---------------------------------------------------------------- */
 const palette = {
   dark: {
     bg: "#0E1626", panel: "#141F35", panelAlt: "#182545",
@@ -22,34 +19,31 @@ const palette = {
 };
 const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');`;
 
-/* ---------------------------------------------------------------
-   MOCK PYQ BANK
---------------------------------------------------------------- */
 const PYQS = [
   { id: 1, year: 2024, exam: "NEET PG", subject: "Medicine", chapter: "Cardiology", topic: "Heart Failure", difficulty: "hard",
     stem: "In a patient with HFrEF already on ACE-I, beta-blocker and MRA, which additional drug class showed a mortality benefit in the DAPA-HF trial?",
     options: ["Loop diuretics", "SGLT2 inhibitors", "Calcium channel blockers", "Nitrates alone"], correct: 1,
-    explanation: "DAPA-HF demonstrated that dapagliflozin (an SGLT2 inhibitor) reduced cardiovascular death and HF hospitalization in HFrEF patients, regardless of diabetes status, cementing SGLT2 inhibitors as a fourth pillar of GDMT." },
-  { id: 2, year: 2024, exam: "INI-CET", subject: "Surgery", chapter: "GI Surgery", topic: "Meckel's Diverticulum", difficulty: "medium",
-    stem: "The 'rule of 2s' for Meckel's diverticulum does NOT include which of the following?",
+    explanation: "DAPA-HF demonstrated that dapagliflozin, an SGLT2 inhibitor, reduced cardiovascular death and HF hospitalization in HFrEF patients, regardless of diabetes status, cementing SGLT2 inhibitors as a fourth pillar of GDMT." },
+  { id: 2, year: 2024, exam: "INI-CET", subject: "Surgery", chapter: "GI Surgery", topic: "Meckel Diverticulum", difficulty: "medium",
+    stem: "The rule of 2s for Meckel diverticulum does NOT include which of the following?",
     options: ["2% of population", "Within 2 feet of ileocecal valve", "Presents by age 2 years only", "2 inches in length"], correct: 2,
-    explanation: "Meckel's diverticulum can present at any age, though it's most often symptomatic in the first 2 years of life — 'presents by age 2 years only' overstates the rule, which is a classic PYQ trap." },
+    explanation: "Meckel diverticulum can present at any age, though it is most often symptomatic in the first 2 years of life. Presents by age 2 years only overstates the rule, which is a classic PYQ trap." },
   { id: 3, year: 2023, exam: "AIIMS", subject: "Pathology", chapter: "Neoplasia", topic: "Thyroid Tumors", difficulty: "easy",
     stem: "Orphan Annie eye nuclei and psammoma bodies are seen in which thyroid malignancy?",
     options: ["Follicular carcinoma", "Papillary carcinoma", "Medullary carcinoma", "Anaplastic carcinoma"], correct: 1,
     explanation: "Papillary thyroid carcinoma is the most common thyroid cancer, characterized histologically by nuclear grooves, Orphan Annie eye nuclei, and psammoma bodies." },
   { id: 4, year: 2023, exam: "NEET PG", subject: "Pharmacology", chapter: "Chemotherapy", topic: "Anti-tubercular Drugs", difficulty: "medium",
-    stem: "Which first-line anti-TB drug requires baseline and periodic visual acuity/color vision testing?",
+    stem: "Which first-line anti-TB drug requires baseline and periodic visual acuity and color vision testing?",
     options: ["Isoniazid", "Rifampicin", "Ethambutol", "Pyrazinamide"], correct: 2,
     explanation: "Ethambutol can cause dose-dependent retrobulbar optic neuritis, presenting first as red-green color blindness, so visual function is monitored throughout therapy." },
   { id: 5, year: 2023, exam: "FMGE", subject: "Anatomy", chapter: "Upper Limb", topic: "Brachial Plexus", difficulty: "hard",
-    stem: "'Waiter's tip' deformity following a difficult forceps delivery indicates injury to which nerve roots?",
+    stem: "Waiter's tip deformity following a difficult forceps delivery indicates injury to which nerve roots?",
     options: ["C5-C6 (Erb's palsy)", "C8-T1 (Klumpke's palsy)", "C7 alone", "T1-T2"], correct: 0,
-    explanation: "Erb's (Erb-Duchenne) palsy results from traction injury to the upper trunk of the brachial plexus (C5-C6), producing the classic 'waiter's tip' posture — adducted, medially rotated arm with pronated forearm." },
+    explanation: "Erb's palsy results from traction injury to the upper trunk of the brachial plexus (C5-C6), producing the classic waiter's tip posture, an adducted, medially rotated arm with pronated forearm." },
   { id: 6, year: 2022, exam: "AIIMS", subject: "Medicine", chapter: "Cardiology", topic: "Pericardial Disease", difficulty: "hard",
-    stem: "Kussmaul's sign — a paradoxical rise in JVP on inspiration — is most characteristic of which condition?",
+    stem: "Kussmaul sign, a paradoxical rise in JVP on inspiration, is most characteristic of which condition?",
     options: ["Cardiac tamponade", "Constrictive pericarditis", "Acute pericarditis", "Dilated cardiomyopathy"], correct: 1,
-    explanation: "In constrictive pericarditis the rigid, non-compliant pericardium prevents the right atrium from accommodating the inspiratory increase in venous return, producing a paradoxical JVP rise — typically absent in tamponade." },
+    explanation: "In constrictive pericarditis the rigid, non-compliant pericardium prevents the right atrium from accommodating the inspiratory increase in venous return, producing a paradoxical JVP rise, typically absent in tamponade." },
   { id: 7, year: 2022, exam: "NEET PG", subject: "Microbiology", chapter: "Mycology", topic: "Cryptococcus", difficulty: "easy",
     stem: "Which staining technique is used to visualize the capsule of Cryptococcus neoformans?",
     options: ["Ziehl-Neelsen stain", "India ink preparation", "Silver stain", "Giemsa stain"], correct: 1,
@@ -61,15 +55,15 @@ const PYQS = [
   { id: 9, year: 2021, exam: "NEET PG", subject: "Biochemistry", chapter: "Metabolism", topic: "Glycogen Storage Disease", difficulty: "hard",
     stem: "A child with severe fasting hypoglycemia, hepatomegaly and lactic acidosis most likely has a deficiency of which enzyme?",
     options: ["Debranching enzyme", "Glucose-6-phosphatase", "Acid maltase", "Glycogen phosphorylase"], correct: 1,
-    explanation: "Glucose-6-phosphatase deficiency (Von Gierke's disease, GSD type I) blocks the terminal step of both glycogenolysis and gluconeogenesis, producing severe fasting hypoglycemia, hepatomegaly, and lactic acidosis." },
+    explanation: "Glucose-6-phosphatase deficiency, Von Gierke disease, GSD type I, blocks the terminal step of both glycogenolysis and gluconeogenesis, producing severe fasting hypoglycemia, hepatomegaly, and lactic acidosis." },
   { id: 10, year: 2020, exam: "FMGE", subject: "Orthopaedics", chapter: "Pediatric Fractures", topic: "Supracondylar Fracture", difficulty: "medium",
     stem: "A supracondylar fracture of the humerus in a child most commonly injures which nerve?",
     options: ["Ulnar nerve", "Median nerve proper", "Anterior interosseous nerve", "Radial nerve"], correct: 2,
-    explanation: "The anterior interosseous nerve (a branch of the median nerve) is most commonly injured in supracondylar humeral fractures, presenting as an isolated inability to flex the thumb and index finger DIP joints (pincer grasp)." },
+    explanation: "The anterior interosseous nerve, a branch of the median nerve, is most commonly injured in supracondylar humeral fractures, presenting as an isolated inability to flex the thumb and index finger DIP joints, the pincer grasp." },
   { id: 11, year: 2020, exam: "AIIMS", subject: "Medicine", chapter: "Respiratory", topic: "ARDS vs Cardiogenic Edema", difficulty: "hard",
     stem: "On chest X-ray, which finding favors cardiogenic pulmonary edema over ARDS?",
     options: ["Diffuse peripheral ground-glass opacities", "Cardiomegaly with upper lobe venous diversion", "Normal heart size", "Pneumothorax"], correct: 1,
-    explanation: "Cardiomegaly with cephalization of pulmonary vessels reflects elevated left atrial pressure, pointing to a cardiac cause; ARDS typically shows a normal heart size with diffuse, peripheral, patchy opacities from capillary leak." },
+    explanation: "Cardiomegaly with cephalization of pulmonary vessels reflects elevated left atrial pressure, pointing to a cardiac cause. ARDS typically shows a normal heart size with diffuse, peripheral, patchy opacities from capillary leak." },
   { id: 12, year: 2020, exam: "NEET PG", subject: "Pediatrics", chapter: "Respiratory Infections", topic: "Croup", difficulty: "easy",
     stem: "A 2-year-old with a barking cough, inspiratory stridor and low-grade fever, worse at night, most likely has:",
     options: ["Epiglottitis", "Croup (laryngotracheobronchitis)", "Bacterial tracheitis", "Foreign body aspiration"], correct: 1,
@@ -83,9 +77,6 @@ const SUBJECT_COLOR = (t) => ({
 });
 const DIFF_COLOR = (t) => ({ easy: t.mint, medium: t.amber, hard: t.coral });
 
-/* ---------------------------------------------------------------
-   APP
---------------------------------------------------------------- */
 export default function MedMasterPYQ() {
   const [dark, setDark] = useState(true);
   const t = dark ? palette.dark : palette.light;
@@ -138,7 +129,6 @@ export default function MedMasterPYQ() {
       </div>
 
       <div style={{ maxWidth: 980, margin: "0 auto", padding: "22px 20px 60px" }}>
-        {/* stats + year distribution */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 14, marginBottom: 20 }}>
           <div style={cardStyle(t)}>
             <div style={{ fontSize: 12, color: t.textDim, marginBottom: 4 }}>Total PYQs</div>
@@ -162,17 +152,16 @@ export default function MedMasterPYQ() {
           </div>
         </div>
 
-        {/* search + sort + filter toggle */}
         <div style={{ display: "flex", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, background: t.panel, border: `1px solid ${t.border}`, borderRadius: 10, padding: "8px 12px", flex: 1, minWidth: 200 }}>
             <Search size={14} color={t.textDim} />
-            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by topic, chapter, or question text…"
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by topic, chapter, or question text"
               style={{ border: "none", outline: "none", background: "transparent", color: t.text, fontSize: 12.5, flex: 1 }} />
           </div>
           <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} style={{ border: `1px solid ${t.border}`, borderRadius: 10, background: t.panel, color: t.text, fontSize: 12.5, padding: "8px 10px" }}>
             <option value="yearDesc">Newest first</option>
             <option value="yearAsc">Oldest first</option>
-            <option value="subject">Subject A–Z</option>
+            <option value="subject">Subject A to Z</option>
           </select>
           <button onClick={() => setShowFilters(!showFilters)} className="btn" style={{
             display: "flex", alignItems: "center", gap: 6, border: `1px solid ${t.border}`, borderRadius: 10,
@@ -184,7 +173,7 @@ export default function MedMasterPYQ() {
 
         {showFilters && (
           <div style={{ ...cardStyle(t), marginBottom: 18 }}>
-            <FilterGroup t={t} label="Exam" >
+            <FilterGroup t={t} label="Exam">
               {allExams.map((e) => (
                 <Chip key={e} t={t} active={exam === e} onClick={() => setExam(e)}>{e}</Chip>
               ))}
@@ -212,7 +201,6 @@ export default function MedMasterPYQ() {
           </div>
         )}
 
-        {/* results */}
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {filtered.map((q) => {
             const open = !!expanded[q.id];
@@ -229,7 +217,7 @@ export default function MedMasterPYQ() {
                       <Badge color={DIFF_COLOR(t)[q.difficulty]}>{q.difficulty[0].toUpperCase() + q.difficulty.slice(1)}</Badge>
                     </div>
                     <div style={{ fontSize: 13.8, lineHeight: 1.5 }}>{q.stem}</div>
-                    <div style={{ fontSize: 11, color: t.textDim, marginTop: 4 }}>{q.chapter} · {q.topic}</div>
+                    <div style={{ fontSize: 11, color: t.textDim, marginTop: 4 }}>{q.chapter}, {q.topic}</div>
                   </div>
                   {open ? <ChevronUp size={16} color={t.textDim} /> : <ChevronDown size={16} color={t.textDim} />}
                 </div>
@@ -272,3 +260,16 @@ const cardStyle = (t) => ({ background: t.panel, border: `1px solid ${t.border}`
 function Badge({ color, children }) {
   return <span className="mono" style={{ fontSize: 10.5, fontWeight: 600, color, border: `1px solid ${color}55`, background: `${color}14`, borderRadius: 7, padding: "3.5px 9px", display: "inline-flex", alignItems: "center" }}>{children}</span>;
 }
+function FilterGroup({ t, label, children, last }) {
+  return (
+    <div style={{ marginBottom: last ? 0 : 14 }}>
+      <div style={{ fontSize: 11.5, color: t.textDim, fontWeight: 600, marginBottom: 8 }}>{label}</div>
+      <div style={{ display: "flex", gap: 7, flexWrap: "wrap" }}>{children}</div>
+    </div>
+  );
+}
+function Chip({ t, active, onClick, children, dot }) {
+  return (
+    <button onClick={onClick} className="btn" style={{
+      display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 8, fontSize: 11.5,
+      fontWeight: 600, cursor: "pointer", border: `1px solid ${active ? t.tea
