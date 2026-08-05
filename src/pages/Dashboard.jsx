@@ -8,9 +8,6 @@ import {
   ResponsiveContainer, AreaChart, Area, XAxis, Tooltip,
 } from "recharts";
 
-/* ---------------------------------------------------------------
-   TOKENS — "Clinical chart" system: deep navy / scrub teal / lab-report mono
---------------------------------------------------------------- */
 const palette = {
   dark: {
     bg: "#0E1626", panel: "#141F35", panelAlt: "#182545",
@@ -26,11 +23,8 @@ const palette = {
 
 const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');`;
 
-/* ---------------------------------------------------------------
-   MOCK CONTENT TREE
---------------------------------------------------------------- */
 const SUBJECT_DEFS = [
-  { name: "Anatomy", chapters: ["Upper Limb", "Lower Limb", "Thorax", "Abdomen", "Head & Neck", "Neuroanatomy"] },
+  { name: "Anatomy", chapters: ["Upper Limb", "Lower Limb", "Thorax", "Abdomen", "Head and Neck", "Neuroanatomy"] },
   { name: "Physiology", chapters: ["General Physiology", "Nerve-Muscle", "CVS", "Respiratory", "Renal", "Endocrine"] },
   { name: "Biochemistry", chapters: ["Enzymes", "Carbohydrate Metabolism", "Lipid Metabolism", "Molecular Biology", "Vitamins"] },
   { name: "Pathology", chapters: ["General Pathology", "Hematology", "Neoplasia", "Systemic Pathology", "Cytopathology"] },
@@ -40,14 +34,14 @@ const SUBJECT_DEFS = [
   { name: "PSM", chapters: ["Epidemiology", "Biostatistics", "Nutrition", "MCH", "National Programs"] },
   { name: "Medicine", chapters: ["Cardiology", "Nephrology", "Gastroenterology", "Neurology", "Endocrinology", "Infectious Disease"] },
   { name: "Surgery", chapters: ["General Surgery", "Urology", "Neurosurgery", "Cardiothoracic", "Trauma"] },
-  { name: "Obstetrics & Gynaecology", chapters: ["Antenatal Care", "Labour", "High Risk Pregnancy", "Gynae Oncology"] },
-  { name: "Pediatrics", chapters: ["Growth & Development", "Neonatology", "Immunization", "Pediatric Nutrition"] },
+  { name: "Obstetrics and Gynaecology", chapters: ["Antenatal Care", "Labour", "High Risk Pregnancy", "Gynae Oncology"] },
+  { name: "Pediatrics", chapters: ["Growth and Development", "Neonatology", "Immunization", "Pediatric Nutrition"] },
   { name: "Orthopaedics", chapters: ["Fractures", "Joint Disorders", "Bone Tumors", "Spine"] },
   { name: "Dermatology", chapters: ["Infections", "Papulosquamous", "Bullous Disorders", "Pigmentary"] },
   { name: "Psychiatry", chapters: ["Mood Disorders", "Psychotic Disorders", "Anxiety Disorders", "Substance Use"] },
   { name: "Radiology", chapters: ["Chest Imaging", "GI Imaging", "Neuroimaging", "MSK Imaging"] },
   { name: "Anaesthesia", chapters: ["General Anaesthesia", "Regional Blocks", "Airway Management", "Critical Care"] },
-  { name: "ENT", chapters: ["Ear", "Nose", "Throat", "Head & Neck Tumors"] },
+  { name: "ENT", chapters: ["Ear", "Nose", "Throat", "Head and Neck Tumors"] },
   { name: "Ophthalmology", chapters: ["Cornea", "Glaucoma", "Retina", "Refraction"] },
 ];
 
@@ -62,7 +56,7 @@ const SUBJECTS = SUBJECT_DEFS.map((s, si) => {
     const topics = Array.from({ length: topicCount }, (_, ti) => {
       const mastery = Math.round(seededRand(si * 71 + ci * 13 + ti) * 100);
       return {
-        name: `${c} — Topic ${ti + 1}`,
+        name: `${c} Topic ${ti + 1}`,
         mastery,
         questions: 20 + Math.floor(seededRand(si + ci + ti) * 60),
       };
@@ -92,11 +86,7 @@ const NAV = [
   { key: "aichat", label: "AI Chat", icon: MessageSquareText },
 ];
 
-/* ---------------------------------------------------------------
-   SIGNATURE ELEMENT: vitals trace — an ECG-style sparkline used
-   everywhere a "progress bar" would normally go.
---------------------------------------------------------------- */
-function VitalsTrace({ values, color, height = 34, animate = false }) {
+function VitalsTrace({ values, color, height = 34 }) {
   const w = 120, h = height, pad = 4;
   const max = Math.max(...values), min = Math.min(...values);
   const pts = values.map((v, i) => {
@@ -107,8 +97,7 @@ function VitalsTrace({ values, color, height = 34, animate = false }) {
   const d = pts.map((p, i) => (i === 0 ? `M${p[0]},${p[1]}` : `L${p[0]},${p[1]}`)).join(" ");
   return (
     <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ overflow: "visible" }}>
-      <path d={d} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-        opacity={0.9} style={animate ? { filter: `drop-shadow(0 0 4px ${color}66)` } : undefined} />
+      <path d={d} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity={0.9} />
       <circle cx={pts[pts.length - 1][0]} cy={pts[pts.length - 1][1]} r="3" fill={color} />
     </svg>
   );
@@ -126,9 +115,6 @@ function RadialMastery({ value, color, track, size = 76 }) {
   );
 }
 
-/* ---------------------------------------------------------------
-   APP
---------------------------------------------------------------- */
 export default function MedMasterDashboard() {
   const [dark, setDark] = useState(true);
   const t = dark ? palette.dark : palette.light;
@@ -159,13 +145,10 @@ export default function MedMasterDashboard() {
       <style>{FONT_IMPORT}{`
         .disp { font-family:'Space Grotesk',sans-serif; }
         .mono { font-family:'IBM Plex Mono',monospace; }
-        .navbtn:hover { transform: translateX(2px); }
-        .card:hover { transform: translateY(-3px); }
         * { box-sizing:border-box; }
         ::-webkit-scrollbar{width:8px;} ::-webkit-scrollbar-thumb{background:${t.border};border-radius:8px;}
       `}</style>
 
-      {/* SIDEBAR */}
       <aside style={{
         width: 236, flexShrink: 0, borderRight: `1px solid ${t.border}`,
         padding: "22px 14px", display: "flex", flexDirection: "column", gap: 4,
@@ -180,21 +163,20 @@ export default function MedMasterDashboard() {
           </div>
           <div>
             <div className="disp" style={{ fontWeight: 700, fontSize: 15, lineHeight: 1 }}>MedMaster</div>
-            <div className="mono" style={{ fontSize: 10, color: t.textDim, letterSpacing: 1 }}>NEET&nbsp;PG</div>
+            <div className="mono" style={{ fontSize: 10, color: t.textDim, letterSpacing: 1 }}>NEET PG</div>
           </div>
         </div>
 
         {NAV.map(({ key, label, icon: Icon }) => {
           const active = nav === key;
           return (
-            <button key={key} className="navbtn"
+            <button key={key}
               onClick={() => (key === "subjects" ? goSubjects() : setNav(key))}
               style={{
                 display: "flex", alignItems: "center", gap: 11, padding: "10px 12px",
                 borderRadius: 10, border: "none", cursor: "pointer", textAlign: "left",
                 background: active ? (dark ? t.panelAlt : "#E7F5F3") : "transparent",
                 color: active ? t.teal : t.textDim, fontSize: 13.5, fontWeight: 500,
-                transition: "all .15s",
               }}>
               <Icon size={17} strokeWidth={2} />
               {label}
@@ -203,27 +185,25 @@ export default function MedMasterDashboard() {
         })}
 
         <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 4 }}>
-          <button onClick={() => setNav("profile")} className="navbtn" style={{
+          <button onClick={() => setNav("profile")} style={{
             display: "flex", alignItems: "center", gap: 11, padding: "10px 12px", borderRadius: 10,
             border: "none", background: "transparent", color: t.textDim, fontSize: 13.5, cursor: "pointer",
           }}><User size={17} />Profile</button>
-          <button onClick={() => setNav("settings")} className="navbtn" style={{
+          <button onClick={() => setNav("settings")} style={{
             display: "flex", alignItems: "center", gap: 11, padding: "10px 12px", borderRadius: 10,
             border: "none", background: "transparent", color: t.textDim, fontSize: 13.5, cursor: "pointer",
           }}><Settings size={17} />Settings</button>
         </div>
       </aside>
 
-      {/* MAIN */}
       <main style={{ flex: 1, minWidth: 0, padding: "22px 30px 40px", overflowY: "auto" }}>
-        {/* TOPBAR */}
         <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 22 }}>
           <div style={{
             flex: 1, display: "flex", alignItems: "center", gap: 9, background: t.panel,
             border: `1px solid ${t.border}`, borderRadius: 12, padding: "9px 14px", maxWidth: 380,
           }}>
             <Search size={15} color={t.textDim} />
-            <span className="mono" style={{ fontSize: 12.5, color: t.textDim }}>Search subjects, topics, PYQs…</span>
+            <span className="mono" style={{ fontSize: 12.5, color: t.textDim }}>Search subjects, topics, PYQs</span>
           </div>
           <div style={{ flex: 1 }} />
           <Pill icon={<Flame size={14} color={t.amber} />} label="18-day streak" t={t} />
@@ -242,19 +222,16 @@ export default function MedMasterDashboard() {
         </div>
 
         {view === "dashboardHome" && (
-          <DashboardHome t={t} dark={dark} totalQuestions={totalQuestions}
-            onOpenSubjects={goSubjects} />
+          <DashboardHome t={t} totalQuestions={totalQuestions} onOpenSubjects={goSubjects} />
         )}
         {view === "subjects" && (
           <SubjectGrid t={t} onOpen={openSubject} />
         )}
         {view === "chapters" && (
-          <ChapterList t={t} subject={subject} subjectIdx={subjectIdx}
-            onBack={goSubjects} onOpen={openChapter} />
+          <ChapterList t={t} subject={subject} onBack={goSubjects} onOpen={openChapter} />
         )}
         {view === "topics" && (
-          <TopicList t={t} subject={subject} chapter={chapter}
-            onBack={() => setChapterIdx(null)} />
+          <TopicList t={t} subject={subject} chapter={chapter} onBack={() => setChapterIdx(null)} />
         )}
       </main>
     </div>
@@ -273,10 +250,7 @@ function Pill({ icon, label, t }) {
   );
 }
 
-/* ---------------------------------------------------------------
-   DASHBOARD HOME
---------------------------------------------------------------- */
-function DashboardHome({ t, dark, totalQuestions, onOpenSubjects }) {
+function DashboardHome({ t, totalQuestions, onOpenSubjects }) {
   const weakSubjects = [...SUBJECTS].sort((a, b) => a.mastery - b.mastery).slice(0, 3);
   const topSubjects = SUBJECTS.slice(0, 6);
 
@@ -284,10 +258,9 @@ function DashboardHome({ t, dark, totalQuestions, onOpenSubjects }) {
     <div>
       <div className="disp" style={{ fontSize: 24, fontWeight: 700, marginBottom: 3 }}>Good evening, Riya</div>
       <div style={{ color: t.textDim, fontSize: 13.5, marginBottom: 24 }}>
-        You're 6% off your weekly accuracy target. 14 flashcards are due today.
+        You are 6% off your weekly accuracy target. 14 flashcards are due today.
       </div>
 
-      {/* STAT ROW */}
       <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr 1fr", gap: 16, marginBottom: 20 }}>
         <div style={cardStyle(t)}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -295,7 +268,7 @@ function DashboardHome({ t, dark, totalQuestions, onOpenSubjects }) {
               <div style={{ fontSize: 12, color: t.textDim, marginBottom: 4 }}>Weekly accuracy</div>
               <div className="disp" style={{ fontSize: 26, fontWeight: 700 }}>83<span style={{ fontSize: 14 }}>%</span></div>
             </div>
-            <div className="mono" style={{ fontSize: 11, color: t.mint, background: dark ? "#123023" : "#E4F6EC", padding: "3px 8px", borderRadius: 6 }}>▲ 6.2%</div>
+            <div className="mono" style={{ fontSize: 11, color: t.mint, background: dark ? "#123023" : "#E4F6EC", padding: "3px 8px", borderRadius: 6 }}>up 6.2%</div>
           </div>
           <div style={{ height: 90, marginTop: 6, marginLeft: -10 }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -337,8 +310,7 @@ function DashboardHome({ t, dark, totalQuestions, onOpenSubjects }) {
         </div>
       </div>
 
-      {/* WEAK SUBJECTS */}
-      <SectionHead t={t} title="Weak subjects" subtitle="Lowest mastery — prioritize these" />
+      <SectionHead t={t} title="Weak subjects" subtitle="Lowest mastery, prioritize these" />
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 24 }}>
         {weakSubjects.map((s) => (
           <div key={s.name} style={{ ...cardStyle(t), borderLeft: `3px solid ${t.coral}` }}>
@@ -351,11 +323,10 @@ function DashboardHome({ t, dark, totalQuestions, onOpenSubjects }) {
         ))}
       </div>
 
-      {/* SUBJECT SHORTCUT GRID */}
       <SectionHead t={t} title="Continue studying" subtitle="Jump back into a subject" action={{ label: "View all subjects", onClick: onOpenSubjects }} />
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
         {topSubjects.map((s) => (
-          <div key={s.name} className="card" style={{ ...cardStyle(t), cursor: "pointer", transition: "transform .15s" }} onClick={onOpenSubjects}>
+          <div key={s.name} style={{ ...cardStyle(t), cursor: "pointer" }} onClick={onOpenSubjects}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
               <div className="disp" style={{ fontWeight: 600, fontSize: 14.5 }}>{s.name}</div>
               <span className="mono" style={{ fontSize: 12, color: t.teal, fontWeight: 600 }}>{s.mastery}%</span>
@@ -390,4 +361,35 @@ function SectionHead({ t, title, subtitle, action }) {
         <button onClick={action.onClick} style={{
           background: "none", border: "none", color: t.teal, fontSize: 12.5, fontWeight: 600,
           cursor: "pointer", display: "flex", alignItems: "center", gap: 3,
-        }}>{action.label}
+        }}>{action.label} <ChevronRight size={13} /></button>
+      )}
+    </div>
+  );
+}
+
+const cardStyle = (t) => ({
+  background: t.panel, border: `1px solid ${t.border}`, borderRadius: 16, padding: 18,
+});
+const btnStyle = (color) => ({
+  background: color, color: "#0E1626", border: "none", borderRadius: 9, padding: "8px 13px",
+  fontSize: 12.5, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 4,
+});
+
+function SubjectGrid({ t, onOpen }) {
+  return (
+    <div>
+      <div className="disp" style={{ fontSize: 22, fontWeight: 700, marginBottom: 3 }}>Subjects</div>
+      <div style={{ color: t.textDim, fontSize: 13.5, marginBottom: 20 }}>{SUBJECTS.length} NEET PG subjects, tap to open chapters</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
+        {SUBJECTS.map((s, i) => (
+          <div key={s.name} onClick={() => onOpen(i)} style={{ ...cardStyle(t), cursor: "pointer" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <div className="disp" style={{ fontWeight: 600, fontSize: 14 }}>{s.name}</div>
+              <RadialMastery value={s.mastery} color={t.teal} track={t.border} size={40} />
+            </div>
+            <div style={{ fontSize: 11.5, color: t.textDim, marginBottom: 10 }}>{s.chapters.length} chapters</div>
+            <VitalsTrace values={s.trace} color={t.teal} height={26} />
+          </div>
+        ))}
+      </div>
+  
